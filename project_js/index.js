@@ -134,10 +134,17 @@ function changeSearchInput() {
     input.placeholder = `Search by ${type.value.replaceAll("_", " ")}`;
   }
 }
-
 function logoutSession() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+
+  const proceedToLogout = confirm("Are you sure you want to log out?");
+
+  if (!proceedToLogout) {
+    return; 
+  }
+
+ 
+  localStorage.removeItem("AccessToken");
+  localStorage.removeItem("RefreshToken");
 
   alert("Logged out successfully.");
   window.location.href = "/index.html";
