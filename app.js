@@ -16,59 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // SIGN UP ROUTE
 
-app.post("/sign-up", async (req, res) => {
-  const { email, userName, password, major } = req.body;
-  const checkCmd = `SELECT password FROM usersInfo WHERE email=?`;
-  const insertCmd = `INSERT INTO usersInfo(email,userName,password,major) VALUES (?,?,?,?);`;
 
-  try {
-    const [rows] = await pool.execute(checkCmd, [email]);
-    if (rows.length > 0) {
-      return res
-        .status(409)
-        .json({ success: false, message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const value = [email, userName, hashedPassword, major || null];
-    const [insertedResults] = await pool.execute(insertCmd, value);
-
-    const userId = insertedResults.insertId;
-
-    const AccessToken = jwt.sign(
-      { user: userId, email: email },
-      process.env.Access_Control,
-      { expiresIn: "15m" },
-    );
-
-    const RefreshToken = jwt.sign(
-      { user: userId, email: email },
-      process.env.Refresh_Control,
-      { expiresIn: "7d" },
-    );
-    try {
-      await sendEmail(
-        email,
-        `Hi ${userName},
-
-Congratulations! Your Task Reminder account has been created successfully.
-
-You can now start creating tasks, setting reminders, and staying organized.`,
-      );
-    } catch (error) {
-      console.log(error.message);
-    }
-    res.status(200).json({
-      RefreshToken: RefreshToken,
-      AccessToken: AccessToken,
-      message: "Signed up and logged in successfully",
-      success: true,
-    });
-  } catch (error) {
-    console.error("Signup error:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-});
 
 // SIGN IN ROUTE
 
