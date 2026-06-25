@@ -215,28 +215,34 @@ WHERE user_id = ? `;
       message: "Invalid search type",
     });
   }
-  try {
-    const [ressult] = await pool.execute(searchCmd, value);
+ try {
+  const [result] = await pool.execute(searchCmd, value);
 
-    if (ressult.length === 0) {
-      console.log("NO Task in this type");
-      return res
-        .status(404)
-        .json({ success: false, message: `NO Task  in  ${searchType}` });
-    }
-    console.log(ressult);
-    res.status(200).json({
-      success: true,
-      message: `congratulations here is your value`,
-      data: ressult,
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({
+  if (result.length === 0) {
+    console.log("NO Task in this type");
+
+    return res.status(404).json({
       success: false,
-      message: `error occured please try again later`,
+      message: `NO Task in ${searchType}`,
     });
   }
+
+  console.log(result);
+
+  res.status(200).json({
+    success: true,
+    message: "Congratulations, here is your value",
+    data: result,
+  });
+
+} catch (error) {
+  console.error(error.message);
+
+  res.status(500).json({
+    success: false,
+    message: "Error occurred, please try again later",
+  });
+}
 });
 
 taskReminder();
