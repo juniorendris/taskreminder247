@@ -26,4 +26,4 @@ A secure, full-stack task management system designed to keep your productivity h
 4. Run the server: `npm start`
 
 ---
-*Developed by Muhammed Endris Yasin*
+*Developed by TEAM [EMJUN]*
